@@ -175,7 +175,7 @@ func (jwt *JWT) getTokenFormHeader(c *gin.Context) (string, error) {
 	}
 	// 请求头中的 Token 格式为： Bearer xxx 所以需要按空格分割
 	// 分割后结果为：["Bearer", "token"]，要取数组中的第二个元素
-	parts := strings.SplitN(header, "", 2)
+	parts := strings.SplitN(header, " ", 2)
 	if !(len(parts) == 2 && parts[0] == "Bearer") {
 		return "", ErrHeaderMalformed
 	}

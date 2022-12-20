@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"cloud-api-go/routes"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
@@ -9,6 +10,7 @@ import (
 func SetupRouter(router *gin.Engine) {
 	// 注册全局中间件
 	// 注册 API 路由
+	routes.RegisterApiRoutes(router)
 	// 配置 404 路由
 	setupNotFoundHandler(router)
 }

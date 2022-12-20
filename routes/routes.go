@@ -6,28 +6,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterApiRoutes(router *gin.Engine) {
+func RegisterApiRoutes(r *gin.Engine) {
 	var v1 *gin.RouterGroup
 	if len(config.Get("app.api_domain")) == 0 {
-		v1 = router.Group("/api/v1")
+		v1 = r.Group("/api/v1")
 	} else {
-		v1 = router.Group("/v1")
+		v1 = r.Group("/v1")
 	}
-
+	// http://localhost:3000/api/v1/auth/xxx/login
+	authGroup := v1.Group("/auth")
 	{
-		// http://localhost:3000/api/v1/auth/game/list
-		authGroup := v1.Group("/auth")
-		{
-			// 管理员和选手登录
-			lgc := new(auth.LoginController)
-			authGroup.POST("/login/admin", lgc.AdminLogin)
-			authGroup.POST("/login/gamer", lgc.GamerLogin)
-
-			// 比赛的增删改查
-			authGroup.POST("/game/add")
-			authGroup.GET("/game/list")
-			authGroup.PATCH("/game/:id")
-			authGroup.DELETE("/game/:id")
-		}
+		lgc := new(auth.LoginController)
+		authGroup.POST("/admin/login", lgc.AdminLogin)
+		authGroup.POST("/gamer/login", lgc.GamerLogin)
+	}
+	// http://localhost:3000/api/v1/game/list
+	gameGroup := v1.Group("/game")
+	{
+		// 获取比赛列表
+		gameGroup.GET("/list")
 	}
 }
