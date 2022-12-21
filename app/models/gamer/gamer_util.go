@@ -14,8 +14,8 @@ func All() (gamers []Gamer) {
 	return
 }
 
-// IsUsernameExist 判断选手用户名是否存在
-func IsUsernameExist(username string) bool {
+// IsGamerExist 判断选手用户名是否存在
+func IsGamerExist(username string) bool {
 	var count int64
 	database.DB.Model(Gamer{}).Where("username = ?", username).Count(&count)
 	return count > 0

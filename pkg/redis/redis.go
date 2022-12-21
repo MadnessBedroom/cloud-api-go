@@ -86,3 +86,13 @@ func (rds *RdsClient) Has(key string) bool {
 
 	return true
 }
+
+// Del 删除存储在 redis 里面的数据，支持多个 key 传参
+func (rds *RdsClient) Del(keys ...string) bool {
+	if err := rds.Client.Del(rds.Context, keys...).Err(); err != nil {
+		logger.ErrorString("Redis", "Del", err.Error())
+		return false
+	}
+
+	return true
+}

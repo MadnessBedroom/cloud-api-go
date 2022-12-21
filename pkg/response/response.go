@@ -1,6 +1,7 @@
 package response
 
 import (
+	"cloud-api-go/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -24,6 +25,54 @@ func Data(c *gin.Context, data interface{}) {
 	JSON(c, gin.H{
 		"success": true,
 		"data":    data,
+	})
+}
+
+// Created 响应 201 和带有 data 键的 JSON 数据
+func Created(c *gin.Context, data interface{}) {
+	c.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"data":    data,
+	})
+}
+
+// CreatedJSON 响应 201 和 JSON 数据
+func CreatedJSON(c *gin.Context, data interface{}) {
+	c.JSON(http.StatusCreated, data)
+}
+
+// Abort404 响应 404，未传参 msg 时使用默认消息
+func Abort404(c *gin.Context, message ...string) {
+	c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+		"message": defaultMessage("权限不足，请确定您", message...),
+	})
+}
+
+// BadRequest 响应 400，传参 err 对象，未传参 msg 时使用默认消息
+// 在解析用户请求，请求的格式或者方法不符合预期时调用
+func BadRequest(c *gin.Context, err error, msg ...string) {
+	logger.LogIf(err)
+	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+		"message": defaultMessage("请求解析错误，请确认请求格式是否正确。上传文件请使用 multipart 标头，参数请使用 JSON 格式。", msg...),
+		"error":   err.Error(),
+	})
+}
+
+// ValidationError 处理表单验证不通过的错误，返回的 JSON 示例：
+//
+//	{
+//	    "errors": {
+//	        "phone": [
+//	            "手机号为必填项，参数名称 phone",
+//	            "手机号长度必须为 11 位的数字"
+//	        ]
+//	    },
+//	    "message": "请求验证不通过，具体请查看 errors"
+//	}
+func ValidationError(c *gin.Context, errors map[string][]string) {
+	c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
+		"message": "请求验证不通过，具体请查看 errors",
+		"errors":  errors,
 	})
 }
 

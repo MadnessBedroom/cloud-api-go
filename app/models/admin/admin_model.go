@@ -4,10 +4,10 @@ import "cloud-api-go/app/models"
 
 type Admin struct {
 	models.BaseModel
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
-	Nickname string `json:"nickname,omitempty"`
-	Avatar   string `json:"avatar,omitempty"`
+	Username string `gorm:"type:varchar(50);not null;unique;comment:'管理员登录用户名'" json:"username"`
+	Password string `gorm:"size:255;not null;comment:'管理员密码'" json:"password"`
+	Nickname string `gorm:"type:varchar(50);comment:'昵称'" json:"nickname"`
+	Avatar   string `gorm:"type:varchar(255);comment:'头像'" json:"avatar"`
 	models.CommonTimestampsField
 }
 
