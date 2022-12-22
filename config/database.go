@@ -8,7 +8,7 @@ func init() {
 			"connection": config.Env("DB_CONNECTION", "mysql"),
 			"mysql": map[string]interface{}{
 				// 数据库连接信息
-				"host":     config.Env("DB_HOST", "127.0.0.1"),
+				"host":     config.Env("DB_HOST", "192.168.4.88"),
 				"port":     config.Env("DB_PORT", "3306"),
 				"database": config.Env("DB_DATABASE", "cloud"),
 				"username": config.Env("DB_USERNAME", "root"),
