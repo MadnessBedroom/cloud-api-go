@@ -3,6 +3,7 @@ package response
 import (
 	"cloud-api-go/pkg/logger"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"net/http"
 )
 
@@ -42,9 +43,23 @@ func CreatedJSON(c *gin.Context, data interface{}) {
 }
 
 // Abort404 响应 404，未传参 msg 时使用默认消息
-func Abort404(c *gin.Context, message ...string) {
+func Abort404(c *gin.Context, msg ...string) {
 	c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-		"message": defaultMessage("权限不足，请确定您", message...),
+		"message": defaultMessage("数据不存在，请确定请求正确", msg...),
+	})
+}
+
+// Abort403 响应 403，未传参 msg 时使用默认消息
+func Abort403(c *gin.Context, msg ...string) {
+	c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+		"message": defaultMessage("权限不足，请确定您有对应的权限", msg...),
+	})
+}
+
+// Abort500 响应 500，未传参 msg 时使用默认消息
+func Abort500(c *gin.Context, msg ...string) {
+	c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+		"message": defaultMessage("服务器内部错误，请稍候再试", msg...),
 	})
 }
 
@@ -54,6 +69,20 @@ func BadRequest(c *gin.Context, err error, msg ...string) {
 	logger.LogIf(err)
 	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 		"message": defaultMessage("请求解析错误，请确认请求格式是否正确。上传文件请使用 multipart 标头，参数请使用 JSON 格式。", msg...),
+		"error":   err.Error(),
+	})
+}
+
+func Error(c *gin.Context, err error, msg ...string) {
+	logger.LogIf(err)
+	// error 的类型为数据库未找到内容 直接退出
+	if err == gorm.ErrRecordNotFound {
+		Abort404(c)
+		return
+	}
+
+	c.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
+		"message": defaultMessage("请求处理失败，请查看 error 的值", msg...),
 		"error":   err.Error(),
 	})
 }
