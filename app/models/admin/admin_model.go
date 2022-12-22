@@ -1,6 +1,9 @@
 package admin
 
-import "cloud-api-go/app/models"
+import (
+	"cloud-api-go/app/models"
+	"cloud-api-go/pkg/hash"
+)
 
 type Admin struct {
 	models.BaseModel
@@ -16,4 +19,8 @@ func (a *Admin) Update() {
 }
 
 func (a *Admin) Save() {
+}
+
+func (a *Admin) ComparePassword(_password string) bool {
+	return hash.BcryptCheck(_password, a.Password)
 }

@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"cloud-api-go/app/requests/validators"
 	"github.com/gin-gonic/gin"
 	"github.com/thedevsaddam/govalidator"
 )
@@ -9,6 +10,7 @@ type AdminLoginRequest struct {
 	Username      string `json:"username,omitempty" valid:"username"`
 	Password      string `json:"password,omitempty" valid:"password"`
 	CaptchaAnswer string `json:"captcha_answer,omitempty" valid:"captcha_answer"`
+	CaptchaID     string `json:"captcha_id" valid:"captcha_id"`
 }
 
 // LoginByAdmin 管理员登录的验证表单，errs 的长度等于零表示验证通过
@@ -36,11 +38,11 @@ func LoginByAdmin(data interface{}, c *gin.Context) map[string][]string {
 	errs := validate(data, rules, messages)
 
 	_data := data.(*AdminLoginRequest)
-
+	errs = validators.ValidateCaptcha(_data.CaptchaID, _data.CaptchaAnswer, errs)
 	return errs
 }
 
 // LoginByGamer 选手登录的验证表单，errs 的长度等于零表示验证通过
 func LoginByGamer(data interface{}, c *gin.Context) map[string][]string {
-
+	return map[string][]string{}
 }

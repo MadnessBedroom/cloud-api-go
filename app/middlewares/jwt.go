@@ -28,5 +28,4 @@ func AuthJWT() gin.HandlerFunc {
 		c.Set("current_user", gamerModel)
 		c.Next()
 	}
-
 }
